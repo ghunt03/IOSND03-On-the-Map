@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 struct StudentInformation {
     let objectId: String
     let userId: String
@@ -17,6 +16,8 @@ struct StudentInformation {
     let mediaURL: String
     let latitude: Double
     let longitude: Double
+    let fullName: String
+
     
     init(dictionary: [String:AnyObject]) {
         objectId = dictionary[ParseClient.JSONResponseKeys.ObjectId] as! String
@@ -27,6 +28,19 @@ struct StudentInformation {
         mediaURL = dictionary[ParseClient.JSONResponseKeys.URL] as! String
         latitude = dictionary[ParseClient.JSONResponseKeys.Latitude] as! Double
         longitude = dictionary[ParseClient.JSONResponseKeys.Longitude] as! Double
+        fullName = "\(firstName) \(lastName)"
+        
+    }
+    init(objectID: String, userID:String, firstName: String, lastname: String, mapstring: String, url: String, latitude: Double, longitude: Double) {
+        self.objectId = objectID
+        self.userId = userID
+        self.firstName = firstName
+        self.lastName = lastname
+        self.mapString = mapstring
+        self.mediaURL = url
+        self.latitude = latitude
+        self.longitude = longitude
+        self.fullName = "\(firstName) \(lastName)"
     }
     
     static func studentInformationFromResults(results: [[String:AnyObject]]) -> [StudentInformation] {
@@ -35,6 +49,10 @@ struct StudentInformation {
             records.append(StudentInformation(dictionary: result))
         }
         return records
+    }
+    
+    func toJSON() ->String {
+        return "{\"uniqueKey\": \"\(userId)\", \"firstName\": \"\(firstName)\", \"lastName\": \"\(lastName)\",\"mapString\": \"\(mapString)\", \"mediaURL\": \"\(mediaURL)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}"
     }
     
 }

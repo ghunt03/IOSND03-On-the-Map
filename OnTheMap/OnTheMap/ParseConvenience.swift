@@ -15,7 +15,6 @@ extension ParseClient {
             ParameterKeys.Limit: ParameterValues.Limit,
             ParameterKeys.OrderBy: ParameterValues.OrderBy
         ]
-        
         taskForGETMethod(parameters as! [String : AnyObject]) {
             (results, error) in
             guard (error == nil) else {
@@ -28,6 +27,53 @@ extension ParseClient {
             }
             let studentRecords = StudentInformation.studentInformationFromResults(records)
             completionHandlerForStudents(result: studentRecords, error: nil)
+        }
+    }
+    
+    func postStudent(student: StudentInformation, completionHandlerForPostStudent: (result: StudentInformation?, error: String?)->Void) {
+        let parameters = [String:AnyObject]()
+        let jsonData = student.toJSON()
+        taskForPOSTMethod(parameters, jsonData: jsonData) {
+            (results, error) in
+            guard (error == nil) else {
+                completionHandlerForPostStudent(result: nil, error:error?.localizedDescription)
+                return
+            }
+            completionHandlerForPostStudent(result: student, error:nil)
+        }
+    }
+    
+    func deleteLocation(objectId: String, completionHandlerForDeletObject: (result: AnyObject?, error: String?)->Void) {
+        var mutableMethod: String = Methods.DeleteObjectData
+        mutableMethod = subtituteKeyInMethod(mutableMethod, key: URLKeys.ObjectId, value: objectId)!
+        taskForDELETEMethod(mutableMethod) {
+            (results, error) in
+            guard (error == nil) else {
+                print(error)
+                return
+            }
+            completionHandlerForDeletObject(result: results, error: nil)
+            
+        }
+    }
+    
+    
+    func getLocation(userId: String, completionHandlerForLocation: (result: [StudentInformation]?, error: String?)->Void) {
+        let parameters = [
+            ParameterKeys.Where: "{\"uniqueKey\": \"\(userId)\"}"
+        ]
+        taskForGETMethod(parameters) {
+            (results, error) in
+            guard (error == nil) else {
+                completionHandlerForLocation(result: nil, error:error?.localizedDescription)
+                return
+            }
+            guard let records = results[JSONResponseKeys.Results] as? [[String:AnyObject]] else {
+                completionHandlerForLocation(result: nil, error: "Cannot find key '\(JSONResponseKeys.Results)' in \(results)")
+                return
+            }
+            let studentRecords = StudentInformation.studentInformationFromResults(records)
+            completionHandlerForLocation(result: studentRecords, error: nil)
         }
     }
 }

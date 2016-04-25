@@ -9,10 +9,8 @@ import UIKit
 import Foundation
 
 class TableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    var parseClient = ParseClient()
+
     var students: [StudentInformation] = [StudentInformation]()
-    
-    
     @IBOutlet weak var mapTableView: UITableView!
     
     
@@ -22,7 +20,7 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        parseClient.getStudents {
+        ParseClient.parseSharedInstance().getStudents {
             (students, error) in
             if let students = students {
                 self.students = students
@@ -51,7 +49,7 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         let cell = tableView.dequeueReusableCellWithIdentifier("MapTableCell")! as! MapTableCell
         let student = students[indexPath.row]
-        cell.displayName.text = "\(student.firstName) \(student.lastName)"
+        cell.displayName.text = "\(student.fullName)"
         return cell
     }
     

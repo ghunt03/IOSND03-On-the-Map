@@ -18,9 +18,14 @@ extension ParseClient {
         static let ApiPath = "/1/classes/StudentLocation"
     }
     
+    struct Methods {
+        static let DeleteObjectData = "/{object_id}"
+    }
+    
     struct ParameterKeys {
         static let Limit = "limit"
         static let Skip = "skip"
+        static let Where = "where"
         static let OrderBy = "order"
     }
     
@@ -29,6 +34,10 @@ extension ParseClient {
         static let Limit = 100
         static let Skip = 0
         static let OrderBy = "-updatedAt"
+    }
+    
+    struct URLKeys {
+        static let ObjectId = "object_id"
     }
     
     struct JSONResponseKeys {

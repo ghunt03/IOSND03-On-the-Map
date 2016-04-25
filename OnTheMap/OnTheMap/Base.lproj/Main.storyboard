@@ -335,19 +335,177 @@
             </objects>
             <point key="canvasLocation" x="3054" y="766"/>
         </scene>
+        <!--Info Post View Controller-->
+        <scene sceneID="ZcT-hr-Vgk">
+            <objects>
+                <viewController id="zmh-VW-JFv" customClass="InfoPostViewController" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="8q4-e8-IdM"/>
+                        <viewControllerLayoutGuide type="bottom" id="r6y-qU-LlD"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8Wv-3b-4Uc">
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Where are you studying from today?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xel-6s-JPy">
+                                <rect key="frame" x="-42" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                                <variation key="widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="62" y="86" width="277" height="85"/>
+                                </variation>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VmG-6X-KF8">
+                                <rect key="frame" x="-25" y="-30" width="97" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <variation key="widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="62" y="184" width="277" height="30"/>
+                                </variation>
+                            </textField>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="xrj-TN-DMS">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                <variation key="widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="0.0" y="236" width="400" height="270"/>
+                                </variation>
+                            </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qNq-PK-gh5">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <state key="normal" title="Find On Map">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <variation key="widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="45" y="527" width="142" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="findOnMapPressed:" destination="zmh-VW-JFv" eventType="touchUpInside" id="IX8-Or-nrR"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jZR-YF-5JE">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Cancel">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <variation key="widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="212" y="527" width="142" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="cancelPressed:" destination="zmh-VW-JFv" eventType="touchUpInside" id="dBn-bc-dqA"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dcy-wY-Uwm">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" title="Delete existing Entries"/>
+                                <variation key="widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="177" y="562" width="46" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="deletePressed:" destination="zmh-VW-JFv" eventType="touchUpInside" id="sjK-Je-rBz"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4by-Dy-TJO">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal" title="Submit">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <variation key="widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="45" y="527" width="142" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="submitPressed:" destination="zmh-VW-JFv" eventType="touchUpInside" id="DbD-PK-uvu"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.18039215689999999" green="0.65490196079999996" blue="0.89411764709999997" alpha="1" colorSpace="calibratedRGB"/>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="Xel-6s-JPy"/>
+                                <exclude reference="VmG-6X-KF8"/>
+                                <exclude reference="xrj-TN-DMS"/>
+                                <exclude reference="qNq-PK-gh5"/>
+                                <exclude reference="jZR-YF-5JE"/>
+                                <exclude reference="Dcy-wY-Uwm"/>
+                                <exclude reference="4by-Dy-TJO"/>
+                            </mask>
+                        </variation>
+                        <variation key="widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="Xel-6s-JPy"/>
+                                <include reference="VmG-6X-KF8"/>
+                                <include reference="xrj-TN-DMS"/>
+                                <include reference="qNq-PK-gh5"/>
+                                <include reference="jZR-YF-5JE"/>
+                                <include reference="Dcy-wY-Uwm"/>
+                                <include reference="4by-Dy-TJO"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="cancelButton" destination="jZR-YF-5JE" id="A3a-ID-e4L"/>
+                        <outlet property="findOnMapButton" destination="qNq-PK-gh5" id="WRI-db-yEu"/>
+                        <outlet property="inputText" destination="VmG-6X-KF8" id="Wqa-Rh-vaO"/>
+                        <outlet property="mapView" destination="xrj-TN-DMS" id="K0X-hJ-jWc"/>
+                        <outlet property="questionLabel" destination="Xel-6s-JPy" id="OTG-tn-lpS"/>
+                        <outlet property="submitButton" destination="4by-Dy-TJO" id="CrK-Hj-a8e"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="LBA-Z3-v7p" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3063" y="-573"/>
+        </scene>
         <!--Map-->
         <scene sceneID="XMH-Eb-mnP">
             <objects>
-                <viewController title="Map" id="kM8-gX-EKa" sceneMemberID="viewController">
+                <viewController title="Map" id="kM8-gX-EKa" customClass="MapViewController" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Ktr-pe-Pih"/>
                         <viewControllerLayoutGuide type="bottom" id="wRK-kJ-ks8"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="hNB-6r-B9o">
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="eub-X2-w27">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                            </mapView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="eub-X2-w27" firstAttribute="top" secondItem="Ktr-pe-Pih" secondAttribute="bottom" id="D0b-da-pOf"/>
+                            <constraint firstItem="eub-X2-w27" firstAttribute="leading" secondItem="hNB-6r-B9o" secondAttribute="leading" id="YkZ-QW-zyR"/>
+                            <constraint firstItem="eub-X2-w27" firstAttribute="bottom" secondItem="wRK-kJ-ks8" secondAttribute="top" id="aE4-nQ-mbM"/>
+                            <constraint firstAttribute="trailing" secondItem="eub-X2-w27" secondAttribute="trailing" id="jOs-Gi-iFh"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="eub-X2-w27"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="D0b-da-pOf"/>
+                                <exclude reference="YkZ-QW-zyR"/>
+                                <exclude reference="aE4-nQ-mbM"/>
+                                <exclude reference="jOs-Gi-iFh"/>
+                            </mask>
+                        </variation>
+                        <variation key="widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="eub-X2-w27"/>
+                            </mask>
+                            <mask key="constraints">
+                                <include reference="D0b-da-pOf"/>
+                                <include reference="YkZ-QW-zyR"/>
+                                <include reference="aE4-nQ-mbM"/>
+                                <include reference="jOs-Gi-iFh"/>
+                            </mask>
+                        </variation>
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" image="Map" id="3Da-mi-5xk"/>
+                    <connections>
+                        <outlet property="mapView" destination="eub-X2-w27" id="ZBT-Ce-25g"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wey-E4-elP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -357,7 +515,13 @@
         <scene sceneID="HnY-AU-TqH">
             <objects>
                 <tabBarController id="zY1-QI-0oS" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" title="On The Map" id="oqa-Af-JlG"/>
+                    <navigationItem key="navigationItem" title="On The Map" id="oqa-Af-JlG">
+                        <barButtonItem key="rightBarButtonItem" tag="1" image="Pin" id="IQn-7h-C7J">
+                            <connections>
+                                <segue destination="zmh-VW-JFv" kind="presentation" id="3Is-P2-XEz"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="TB0-dd-moj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>

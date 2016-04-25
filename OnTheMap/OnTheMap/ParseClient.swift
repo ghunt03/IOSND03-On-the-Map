@@ -16,6 +16,8 @@ class ParseClient: NSObject {
         super.init()
     }
     
+    var students: [StudentInformation] = [StudentInformation]()
+    
     //GET Method
     func taskForGETMethod(parameters: [String:AnyObject], completionHandlerForGET: (results: AnyObject!, error: NSError?)->Void) -> NSURLSessionDataTask {
         let request = NSMutableURLRequest(URL: ParseClient.parseURLFromParameters(parameters))
@@ -44,6 +46,67 @@ class ParseClient: NSObject {
         return task
     }
     
+    // POST Function
+    func taskForPOSTMethod(parameters: [String:AnyObject], jsonData: String, completionHandlerForPOST: (results: AnyObject!, error: NSError?)->Void) ->NSURLSessionDataTask {
+        
+        let request = NSMutableURLRequest(URL: ParseClient.parseURLFromParameters(parameters))
+        request.addValue(Constants.ApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue(Constants.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        
+        request.HTTPBody = jsonData.dataUsingEncoding(NSUTF8StringEncoding)
+        let task = session.dataTaskWithRequest(request) {
+            (data, response, error) in
+            guard (error == nil) else {
+                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForPOST)
+                return
+            }
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
+                print(response)
+                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForPOST)
+                return
+            }
+            guard let data = data else {
+                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForPOST)
+                return
+            }
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
+            
+        }
+        task.resume()
+        return task
+    }
+    
+    // DELETE Function
+    func taskForDELETEMethod(method: String, completionHandlerForDELETE: (results: AnyObject!, error: NSError?)->Void) ->NSURLSessionDataTask {
+        let request = NSMutableURLRequest(URL: ParseClient.parseURL(method))
+        request.addValue(Constants.ApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue(Constants.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.HTTPMethod = "DELETE"
+        let task = session.dataTaskWithRequest(request) {
+            (data, response, error) in
+            guard (error == nil) else {
+                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForDELETE)
+                return
+            }
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
+                print(response)
+                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForDELETE)
+                return
+            }
+            guard let data = data else {
+                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForDELETE)
+                return
+            }
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForDELETE)
+        }
+        task.resume()
+        return task
+    }
+    
     // given raw JSON, return a usable Foundation object
     private func convertDataWithCompletionHandler(data: NSData, completionHandlerForConvertData: (result: AnyObject!, error: NSError?) -> Void) {
         
@@ -56,7 +119,17 @@ class ParseClient: NSObject {
         completionHandlerForConvertData(result: parsedResult, error: nil)
     }
 
-    
+    //Create URL From parameters
+    class func parseURL(withPathExtension: String? = nil) -> NSURL {
+        
+        let components = NSURLComponents()
+        components.scheme = ParseClient.Constants.ApiScheme
+        components.host = ParseClient.Constants.ApiHost
+        components.path = ParseClient.Constants.ApiPath + (withPathExtension ?? "")
+        
+        return components.URL!
+    }
+
     
     //Create URL From parameters
     class func parseURLFromParameters(parameters: [String:AnyObject], withPathExtension: String? = nil) -> NSURL {
@@ -80,8 +153,6 @@ class ParseClient: NSObject {
         let userInfo = [NSLocalizedDescriptionKey: errorMessage,
             NSLocalizedFailureReasonErrorKey: errorDomain
         ]
-        
-        
         completionHandlerForError(result: nil, error: NSError(domain: errorDomain, code:1, userInfo: userInfo))
     }
     
@@ -96,10 +167,10 @@ class ParseClient: NSObject {
 
     // MARK: Shared Instance
     
-    class func sharedInstance() -> ParseClient {
+    class func parseSharedInstance() -> ParseClient {
         struct Singleton {
-            static var sharedInstance = ParseClient()
+            static var parseSharedInstance = ParseClient()
         }
-        return Singleton.sharedInstance
+        return Singleton.parseSharedInstance
     }
 }
