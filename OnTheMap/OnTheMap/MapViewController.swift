@@ -13,41 +13,51 @@ import Foundation
 class MapViewController: UIViewController, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
-        var annotations = [MKPointAnnotation]()
-        ParseClient.parseSharedInstance().getStudents {
-            (students, error) in
-            if let students = students {
-                ParseClient.parseSharedInstance().students = students
-                for student in students {
-                    let lat = CLLocationDegrees(student.latitude)
-                    let long = CLLocationDegrees(student.longitude)
-                    
-                    // Here we create the annotation and set its coordiate, title, and subtitle properties
-                    let annotation = MKPointAnnotation()
-                    annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
-                    annotation.title = "\(student.fullName)"
-                    annotation.subtitle = student.mediaURL
-                    
-                    // Finally we place the annotation in an array of annotations.
-                    annotations.append(annotation)
-                }
-                
-                performUIUpdatesOnMain {
-                    self.mapView.addAnnotations(annotations)
-                }
-            }
-            else {
-                print(error)
-            }
-        }
-
+        getStudentLocations()
+    }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
+    func refresh() {
+        getStudentLocations()
     }
     
+    private func getStudentLocations() {
+        /*
+        Updates the sharedInstance of the studentList,
+        then once updated calls the addLocations function
+        */
+        ParseClient.parseSharedInstance().getStudents {
+            (students, error) in
+            guard (error == nil) else {
+                performUIUpdatesOnMain {
+                    self.showError("Unable to access data")
+                }
+                return
+            }
+            self.addLocations()
+        }
+    }
+
+    private func addLocations() {
+        /*
+        function to add the pins to the map view
+        */
+        performUIUpdatesOnMain {
+            for annotation in self.mapView.annotations {
+                self.mapView.removeAnnotation(annotation)
+            }
+            for student in StudentInformation.sharedInstance.studentList {
+                self.mapView.addAnnotation(student.toMapAnnotation())
+            }
+        }
+    }
     
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
@@ -78,6 +88,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 app.openURL(NSURL(string: toOpen)!)
             }
         }
+    }
+    
+    private func showError(errorMessage: String) {
+        // shows error alert view
+        let alertView = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
+        alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+        presentViewController(alertView, animated: true, completion: nil)
     }
 
 }

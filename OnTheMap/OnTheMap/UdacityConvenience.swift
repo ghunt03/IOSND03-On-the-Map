@@ -37,6 +37,7 @@ extension UdacityClient {
         }
     }
     
+    
     private func getSessionDetails(jsonData: String, completionHandlerForSession: (success:Bool, sessionID: String?, userID: String?, errorString: String?) -> Void) {
         taskForPOSTMethod(Methods.Session, jsonData: jsonData) { (results, error) in
             guard (error == nil) else {
@@ -88,5 +89,7 @@ extension UdacityClient {
             completionHandlerForUserDetails(success: true, firstName: firstName, lastName: lastName, errorString: nil)
         }
     }
+    
+    
     
 }

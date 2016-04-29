@@ -25,8 +25,9 @@ extension ParseClient {
                 completionHandlerForStudents(result: nil, error: "Cannot find key '\(JSONResponseKeys.Results)' in \(results)")
                 return
             }
-            let studentRecords = StudentInformation.studentInformationFromResults(records)
-            completionHandlerForStudents(result: studentRecords, error: nil)
+            StudentInformation.sharedInstance.studentList = StudentInformation.studentInformationFromResults(records)
+            
+            completionHandlerForStudents(result: StudentInformation.sharedInstance.studentList, error: nil)
         }
     }
     
@@ -56,6 +57,24 @@ extension ParseClient {
             
         }
     }
+    func updateLocation(student: StudentInformation, completionHandlerForPutStudent: (result: StudentInformation?, error: String?)->Void) {
+        
+        let jsonData = student.toJSON()
+        var mutableMethod: String = Methods.UpdateObjectData
+        mutableMethod = subtituteKeyInMethod(mutableMethod, key: URLKeys.ObjectId, value: student.objectId)!
+
+        
+        taskForPUTMethod(mutableMethod, jsonData: jsonData) {
+            (results, error) in
+            guard (error == nil) else {
+                completionHandlerForPutStudent(result: nil, error:error?.localizedDescription)
+                return
+            }
+            completionHandlerForPutStudent(result: student, error:nil)
+        }
+    }
+
+    
     
     
     func getLocation(userId: String, completionHandlerForLocation: (result: [StudentInformation]?, error: String?)->Void) {

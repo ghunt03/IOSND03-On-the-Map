@@ -60,7 +60,6 @@ class UdacityClient: NSObject {
         
         //TODO: Change to accept dictionary and convert to string
         request.HTTPBody = jsonData.dataUsingEncoding(NSUTF8StringEncoding)
-        
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         let task = session.dataTaskWithRequest(request) {
@@ -89,8 +88,6 @@ class UdacityClient: NSObject {
         task.resume()
         return task
     }
-    
-    //DELETE Method
     
     
     

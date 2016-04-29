@@ -61,6 +61,8 @@ class LoginViewController: UIViewController {
     }
     
     
+    
+    
     @IBAction func WebLink(sender: AnyObject) {
         if let url = NSURL(string: "https://www.udacity.com/account/auth#!/signup") {
             UIApplication.sharedApplication().openURL(url)

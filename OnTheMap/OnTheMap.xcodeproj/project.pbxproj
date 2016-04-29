@@ -26,6 +26,7 @@
 		013E06931CCC961D009804E1 /* MapTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013E06921CCC961D009804E1 /* MapTableCell.swift */; };
 		013E06951CCCA4AE009804E1 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013E06941CCCA4AE009804E1 /* MapViewController.swift */; };
 		013E06971CCCB0FF009804E1 /* InfoPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013E06961CCCB0FF009804E1 /* InfoPostViewController.swift */; };
+		0181E0691CCF66190022C244 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E0681CCF66190022C244 /* TabViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		013E06921CCC961D009804E1 /* MapTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapTableCell.swift; sourceTree = "<group>"; };
 		013E06941CCCA4AE009804E1 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		013E06961CCCB0FF009804E1 /* InfoPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoPostViewController.swift; sourceTree = "<group>"; };
+		0181E0681CCF66190022C244 /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,8 +155,8 @@
 		013E06721CCB7367009804E1 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				013E06901CCC78E3009804E1 /* StudentInformation.swift */,
 				013E06791CCB7486009804E1 /* Clients */,
+				013E06901CCC78E3009804E1 /* StudentInformation.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -174,6 +176,7 @@
 				013E06831CCC6895009804E1 /* TableViewController.swift */,
 				013E06941CCCA4AE009804E1 /* MapViewController.swift */,
 				013E06961CCCB0FF009804E1 /* InfoPostViewController.swift */,
+				0181E0681CCF66190022C244 /* TabViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				013E068D1CCC7892009804E1 /* ParseClient.swift in Sources */,
 				013E067E1CCC3C58009804E1 /* UdacityClient.swift in Sources */,
 				013E06841CCC6895009804E1 /* TableViewController.swift in Sources */,
+				0181E0691CCF66190022C244 /* TabViewController.swift in Sources */,
 				013E06931CCC961D009804E1 /* MapTableCell.swift in Sources */,
 				013E06801CCC3CF9009804E1 /* UdacityConstants.swift in Sources */,
 				013E067C1CCB75A4009804E1 /* LoginViewController.swift in Sources */,

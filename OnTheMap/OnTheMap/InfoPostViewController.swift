@@ -24,46 +24,48 @@ class InfoPostViewController: UIViewController {
     let udacityClient = UdacityClient.sharedInstance()
     let parseClient = ParseClient.parseSharedInstance()
     
+    var student: StudentInformation?
     var location: String = ""
-    var latitude: Double = 0
-    var longitude: Double = 0
+    var url: String = ""
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        submitButton.hidden = true
+        if (student != nil) {
+            location = (student?.mapString)!
+            url = (student?.mediaURL)!
+            addPointToMap()
+        } else {
+            student = StudentInformation(objectID: "", userID: udacityClient.userID!, firstName: udacityClient.firstName!, lastname: udacityClient.lastName!, mapstring: location, url: url, latitude: 0, longitude: 0)
+        }
+        
         questionLabel.text = "Where are you studying from today?"
         inputText.placeholder = "Location"
-        inputText.text = ""
+        inputText.text = location
+        submitButton.hidden = true
     }
     
     @IBAction func findOnMapPressed(sender: AnyObject) {
         location = inputText.text!
         if location != "" {
-            var pointAnnotation:MKPointAnnotation!
-            var pinAnnotationView:MKPinAnnotationView!
             let localSearchRequest:MKLocalSearchRequest! = MKLocalSearchRequest()
             localSearchRequest.naturalLanguageQuery = location
             let localSearch = MKLocalSearch(request: localSearchRequest)
-            localSearch.startWithCompletionHandler { (localSearchResponse, error) -> Void in
+            localSearch.startWithCompletionHandler {
+                (localSearchResponse, error) -> Void in
                 if localSearchResponse == nil{
                     self.showError("Cannot find location")
                 }
                 else {
-                    self.latitude = localSearchResponse!.boundingRegion.center.latitude
-                    self.longitude = localSearchResponse!.boundingRegion.center.longitude
                     
+                    self.student?.updateLocation(localSearchResponse!.boundingRegion.center.latitude, longitude: localSearchResponse!.boundingRegion.center.longitude, location: self.location)
+                    self.clearPointsFromMap()
+                    self.addPointToMap()
                     
-                    pointAnnotation = MKPointAnnotation()
-                    pointAnnotation.title = self.location
-                    pointAnnotation.coordinate = CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
-                    pinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: "pin")
-                    self.mapView.centerCoordinate = pointAnnotation.coordinate
-                    self.mapView.addAnnotation(pinAnnotationView.annotation!)
                     
                     self.findOnMapButton.hidden = true
                     self.submitButton.hidden = false
                     self.inputText.placeholder = "URL"
-                    self.inputText.text = ""
+                    self.inputText.text = self.student?.mediaURL
                     self.questionLabel.text = "Please enter URL"
                 }
             }
@@ -71,35 +73,58 @@ class InfoPostViewController: UIViewController {
         }
     }
     
+    
+    private func clearPointsFromMap() {
+        for annotation in mapView.annotations {
+            self.mapView.removeAnnotation(annotation)
+        }
+        
+    }
+    
+    private func addPointToMap() {
+        let pointAnnotation = student?.toMapAnnotation()
+        let pinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: "pin")
+        self.mapView.centerCoordinate = pointAnnotation!.coordinate
+        self.mapView.addAnnotation(pinAnnotationView.annotation!)
+    }
+    
+    
+    
     @IBAction func cancelPressed(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     @IBAction func submitPressed(sender: AnyObject) {
-        
-        
-        let student = StudentInformation(objectID: "",
-            userID: udacityClient.userID!,
-            firstName: udacityClient.firstName!,
-            lastname: udacityClient.lastName!,
-            mapstring: location,
-            url: inputText.text!,
-            latitude: latitude,
-            longitude: longitude
-        )
-        
-        ParseClient.parseSharedInstance().postStudent(student) {
+        student?.updateURL(inputText.text!)
+        if student?.objectId == "" {
+            //Create new entry
+            ParseClient.parseSharedInstance().postStudent(student!) {
                 (result, error) in
-            if (error==nil) {
-                performUIUpdatesOnMain {
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                if (error==nil) {
+                    performUIUpdatesOnMain {
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    }
+                }
+                else {
+                    self.showError("Error saving location, please try again")
                 }
             }
-            else {
-                self.showError("Error saving location, please try again")
+        } else {
+            //update entry
+            ParseClient.parseSharedInstance().updateLocation(student!) {
+                (result, error) in
+                if (error==nil) {
+                    performUIUpdatesOnMain {
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    }
+                }
+                else {
+                    performUIUpdatesOnMain {
+                        self.showError("Error saving location, please try again")
+                    }
+                }
             }
         }
-
     }
     
     

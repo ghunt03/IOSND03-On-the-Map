@@ -12,11 +12,12 @@ class ParseClient: NSObject {
 
     // shared session
     var session = NSURLSession.sharedSession()
+    
+    
     override init() {
         super.init()
     }
     
-    var students: [StudentInformation] = [StudentInformation]()
     
     //GET Method
     func taskForGETMethod(parameters: [String:AnyObject], completionHandlerForGET: (results: AnyObject!, error: NSError?)->Void) -> NSURLSessionDataTask {
@@ -106,6 +107,37 @@ class ParseClient: NSObject {
         task.resume()
         return task
     }
+    
+    // UPDATE FUNCTION
+    func taskForPUTMethod(method: String, jsonData: String, completionHandlerForPUT: (results: AnyObject!, error: NSError?)->Void) ->NSURLSessionDataTask {
+        let request = NSMutableURLRequest(URL: ParseClient.parseURL(method))
+        request.addValue(Constants.ApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue(Constants.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "PUT"
+        request.HTTPBody = jsonData.dataUsingEncoding(NSUTF8StringEncoding)
+        let task = session.dataTaskWithRequest(request) {
+            (data, response, error) in
+            guard (error == nil) else {
+                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForPUT)
+                return
+            }
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
+                print(response)
+                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForPUT)
+                return
+            }
+            guard let data = data else {
+                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForPUT)
+                return
+            }
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPUT)
+        }
+        task.resume()
+        return task
+    }
+
     
     // given raw JSON, return a usable Foundation object
     private func convertDataWithCompletionHandler(data: NSData, completionHandlerForConvertData: (result: AnyObject!, error: NSError?) -> Void) {

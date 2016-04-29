@@ -20,6 +20,7 @@ extension ParseClient {
     
     struct Methods {
         static let DeleteObjectData = "/{object_id}"
+        static let UpdateObjectData = "/{object_id}"
     }
     
     struct ParameterKeys {
