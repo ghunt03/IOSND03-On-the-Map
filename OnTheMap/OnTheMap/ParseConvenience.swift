@@ -18,16 +18,16 @@ extension ParseClient {
         taskForGETMethod(parameters as! [String : AnyObject]) {
             (results, error) in
             guard (error == nil) else {
-                print(error)
+                completionHandlerForStudents(result: nil, error: "Unable to download data")
                 return
             }
             guard let records = results[JSONResponseKeys.Results] as? [[String:AnyObject]] else {
                 completionHandlerForStudents(result: nil, error: "Cannot find key '\(JSONResponseKeys.Results)' in \(results)")
                 return
             }
-            StudentInformation.sharedInstance.studentList = StudentInformation.studentInformationFromResults(records)
+            StudentArray.sharedInstance.studentArray = StudentInformation.studentInformationFromResults(records)
             
-            completionHandlerForStudents(result: StudentInformation.sharedInstance.studentList, error: nil)
+            completionHandlerForStudents(result: StudentArray.sharedInstance.studentArray, error: nil)
         }
     }
     

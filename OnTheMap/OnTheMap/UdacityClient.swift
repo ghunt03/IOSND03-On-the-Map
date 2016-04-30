@@ -11,7 +11,7 @@ import Foundation
 class UdacityClient: NSObject {
     
     var session = NSURLSession.sharedSession()
-    
+    static let sharedInstance = UdacityClient()
     //Authentication State
     var sessionID: String? = nil
     var userID: String? = nil
@@ -135,14 +135,6 @@ class UdacityClient: NSObject {
     }
 
 
-    // MARK: Shared Instance
-    
-    class func sharedInstance() -> UdacityClient {
-        struct Singleton {
-            static var sharedInstance = UdacityClient()
-        }
-        return Singleton.sharedInstance
-    }
 
 
 }

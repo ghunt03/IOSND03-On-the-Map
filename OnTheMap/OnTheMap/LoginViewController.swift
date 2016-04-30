@@ -22,7 +22,7 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
     @IBOutlet weak var udacityLoginButton: UIButton!
 
     @IBOutlet weak var signUpButton: UIButton!
-    var udacityClient = UdacityClient.sharedInstance()
+    var udacityClient = UdacityClient.sharedInstance
     
     override func viewDidLoad() {
         super.viewDidLoad()

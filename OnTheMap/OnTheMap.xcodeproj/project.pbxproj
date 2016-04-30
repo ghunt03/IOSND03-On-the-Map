@@ -29,6 +29,7 @@
 		0181E0691CCF66190022C244 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E0681CCF66190022C244 /* TabViewController.swift */; };
 		01B8048B1CD32E880000A52D /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01B804891CD32E880000A52D /* FBSDKCoreKit.framework */; };
 		01B8048C1CD32E880000A52D /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01B8048A1CD32E880000A52D /* FBSDKLoginKit.framework */; };
+		01E6E88C1CD46B5B00CE0E9C /* StudentArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6E88B1CD46B5B00CE0E9C /* StudentArray.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		0181E0681CCF66190022C244 /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		01B804891CD32E880000A52D /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		01B8048A1CD32E880000A52D /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
+		01E6E88B1CD46B5B00CE0E9C /* StudentArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentArray.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +166,7 @@
 			children = (
 				013E06791CCB7486009804E1 /* Clients */,
 				013E06901CCC78E3009804E1 /* StudentInformation.swift */,
+				01E6E88B1CD46B5B00CE0E9C /* StudentArray.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -378,6 +381,7 @@
 				013E068D1CCC7892009804E1 /* ParseClient.swift in Sources */,
 				013E067E1CCC3C58009804E1 /* UdacityClient.swift in Sources */,
 				013E06841CCC6895009804E1 /* TableViewController.swift in Sources */,
+				01E6E88C1CD46B5B00CE0E9C /* StudentArray.swift in Sources */,
 				0181E0691CCF66190022C244 /* TabViewController.swift in Sources */,
 				013E06931CCC961D009804E1 /* MapTableCell.swift in Sources */,
 				013E06801CCC3CF9009804E1 /* UdacityConstants.swift in Sources */,

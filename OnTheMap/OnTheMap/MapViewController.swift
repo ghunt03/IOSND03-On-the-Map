@@ -12,9 +12,10 @@ import Foundation
 
 class MapViewController: UIViewController, MKMapViewDelegate {
     
+    //MARK: Outlets
     @IBOutlet weak var mapView: MKMapView!
     
-    
+    //MARK: Views
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
@@ -24,6 +25,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         super.viewWillAppear(animated)
         
     }
+    
+    //Refresh function called from TabViewController when refresh button pressed
     func refresh() {
         getStudentLocations()
     }
@@ -33,11 +36,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         Updates the sharedInstance of the studentList,
         then once updated calls the addLocations function
         */
-        ParseClient.parseSharedInstance().getStudents {
+        ParseClient.sharedInstance.getStudents {
             (students, error) in
             guard (error == nil) else {
                 performUIUpdatesOnMain {
-                    self.showError("Unable to access data")
+                    self.showError(error!)
                 }
                 return
             }
@@ -53,13 +56,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             for annotation in self.mapView.annotations {
                 self.mapView.removeAnnotation(annotation)
             }
-            for student in StudentInformation.sharedInstance.studentList {
+            for student in StudentArray.sharedInstance.studentArray {
                 self.mapView.addAnnotation(student.toMapAnnotation())
             }
         }
     }
     
-    
+    //MARK: Delegates
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
         let reuseId = "pin"

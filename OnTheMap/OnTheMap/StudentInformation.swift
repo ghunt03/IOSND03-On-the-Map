@@ -19,8 +19,7 @@ struct StudentInformation {
     let fullName: String
 
 
-    static var sharedInstance = StudentInformation()
-    var studentList = [StudentInformation]()
+
     
     
     init() {

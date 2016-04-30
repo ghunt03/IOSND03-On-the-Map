@@ -10,9 +10,9 @@ import UIKit
 import MapKit
 import Foundation
 
-class InfoPostViewController: UIViewController {
+class InfoPostViewController: UIViewController, UITextFieldDelegate {
     
-    
+    //MARK: Outlets
 
     @IBOutlet weak var inputText: UITextField!
     @IBOutlet weak var mapView: MKMapView!
@@ -22,14 +22,18 @@ class InfoPostViewController: UIViewController {
     @IBOutlet weak var questionLabel: UILabel!
     @IBOutlet weak var activityView: UIActivityIndicatorView!
     
-    
-    
-    let udacityClient = UdacityClient.sharedInstance()
-    let parseClient = ParseClient.parseSharedInstance()
+    //MARK: Variables
+    let udacityClient = UdacityClient.sharedInstance
+    let parseClient = ParseClient.sharedInstance
     
     var student: StudentInformation?
     var location: String = ""
     var url: String = ""
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        inputText.delegate = self
+    }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -49,6 +53,8 @@ class InfoPostViewController: UIViewController {
         inputText.text = location
         submitButton.hidden = true
     }
+    
+    //MARK: Button Acttions
     
     @IBAction func findOnMapPressed(sender: AnyObject) {
         location = inputText.text!
@@ -82,25 +88,6 @@ class InfoPostViewController: UIViewController {
         }
     }
     
-    
-    private func clearPointsFromMap() {
-        //remove points from map
-        for annotation in mapView.annotations {
-            self.mapView.removeAnnotation(annotation)
-        }
-        
-    }
-    
-    private func addPointToMap() {
-        // add points to map
-        let pointAnnotation = student?.toMapAnnotation()
-        let pinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: "pin")
-        self.mapView.centerCoordinate = pointAnnotation!.coordinate
-        self.mapView.addAnnotation(pinAnnotationView.annotation!)
-    }
-    
-    
-    
     @IBAction func cancelPressed(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -109,7 +96,7 @@ class InfoPostViewController: UIViewController {
         student?.updateURL(inputText.text!)
         if student?.objectId == "" {
             //Create new entry
-            ParseClient.parseSharedInstance().addLocation(student!) {
+            parseClient.addLocation(student!) {
                 (result, error) in
                 if (error==nil) {
                     performUIUpdatesOnMain {
@@ -122,7 +109,7 @@ class InfoPostViewController: UIViewController {
             }
         } else {
             //update existing entry
-            ParseClient.parseSharedInstance().updateLocation(student!) {
+            parseClient.updateLocation(student!) {
                 (result, error) in
                 if (error==nil) {
                     performUIUpdatesOnMain {
@@ -137,7 +124,6 @@ class InfoPostViewController: UIViewController {
             }
         }
     }
-    
     
     @IBAction func deletePressed(sender: AnyObject) {
         //find existing entries for current student
@@ -167,6 +153,30 @@ class InfoPostViewController: UIViewController {
         }
     }
     
+    //MARK: Map Points
+    private func clearPointsFromMap() {
+        //remove points from map
+        for annotation in mapView.annotations {
+            self.mapView.removeAnnotation(annotation)
+        }
+        
+    }
+    
+    private func addPointToMap() {
+        // add points to map
+        let pointAnnotation = student?.toMapAnnotation()
+        let pinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: "pin")
+        self.mapView.centerCoordinate = pointAnnotation!.coordinate
+        self.mapView.addAnnotation(pinAnnotationView.annotation!)
+    }
+    
+    
+    
+    
+    
+    
+    //MARK: UI Controls
+    
     private func showError(errorMessage: String) {
         let alertView = UIAlertController(title: "Check-In Error", message: errorMessage, preferredStyle: .Alert)
         alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
@@ -188,5 +198,11 @@ class InfoPostViewController: UIViewController {
             activityView.startAnimating()
         }
     }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
+    
     
 }

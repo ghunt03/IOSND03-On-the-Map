@@ -25,20 +25,22 @@ class TableViewController: UIViewController {
         super.viewWillAppear(animated)
         getStudentLocations()
     }
+    
+    //Refresh function called from TabViewController when refresh button pressed
     func refresh() {
         getStudentLocations()
     }
     
     private func getStudentLocations() {
-        ParseClient.parseSharedInstance().getStudents {
+        ParseClient.sharedInstance.getStudents {
             (students, error) in
             guard (error == nil) else {
                 performUIUpdatesOnMain {
-                    self.showError("Unable to access data")
+                    self.showError(error!)
                 }
                 return
             }
-            self.studentList = StudentInformation.sharedInstance.studentList
+            self.studentList = StudentArray.sharedInstance.studentArray
             performUIUpdatesOnMain {
                 self.mapTableView.reloadData()
             }

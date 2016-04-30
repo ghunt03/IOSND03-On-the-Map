@@ -12,7 +12,7 @@ class ParseClient: NSObject {
 
     // shared session
     var session = NSURLSession.sharedSession()
-    
+    static let sharedInstance = ParseClient()
     
     override init() {
         super.init()
@@ -134,12 +134,6 @@ class ParseClient: NSObject {
         }
     }
 
-    // MARK: Shared Instance
     
-    class func parseSharedInstance() -> ParseClient {
-        struct Singleton {
-            static var parseSharedInstance = ParseClient()
-        }
-        return Singleton.parseSharedInstance
-    }
+   
 }

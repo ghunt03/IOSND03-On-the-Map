@@ -11,15 +11,19 @@ import Foundation
 import FBSDKLoginKit
 class TabViewController: UITabBarController {
     
-    
-    let udacityClient = UdacityClient.sharedInstance()
-    let parseClient = ParseClient.parseSharedInstance()
-    
-    
+    //MARK: Outlets
     @IBOutlet weak var logoutButton: UIBarButtonItem!
     @IBOutlet weak var postButton: UIBarButtonItem!
     @IBOutlet weak var refreshButton: UIBarButtonItem!
     
+    
+    //MARK: Variables
+    let udacityClient = UdacityClient.sharedInstance
+    let parseClient = ParseClient.sharedInstance
+    
+    
+
+    //MARK: Actions for button pressed
     @IBAction func postButtonPressed(sender: AnyObject) {
         // check if entry exists
         parseClient.getLocation(udacityClient.userID!) {
@@ -85,6 +89,9 @@ class TabViewController: UITabBarController {
         
     }
     
+    
+    
+    //MARK: UI functions
     private func openPostScreen(student: StudentInformation?) {
         let infoPostController = self.storyboard!.instantiateViewControllerWithIdentifier("InfoPostViewController") as! InfoPostViewController
         infoPostController.student = student
