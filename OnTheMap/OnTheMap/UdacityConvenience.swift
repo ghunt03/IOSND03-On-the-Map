@@ -74,7 +74,7 @@ extension UdacityClient {
                     completionHandlerForSession(success: false, sessionID: nil, userID: nil, errorString: "Invalid Login Details")
                 }
                 else {
-                    completionHandlerForSession(success: false, sessionID: nil, userID: nil, errorString: "Unable to connect: \(error?.localizedDescription)")
+                    completionHandlerForSession(success: false, sessionID: nil, userID: nil, errorString: "Unable to connect. No connection available")
                 }
                 return
             }

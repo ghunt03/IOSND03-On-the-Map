@@ -33,11 +33,14 @@ class InfoPostViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        //check if student passed in from previous view controller
         if (student != nil) {
             location = (student?.mapString)!
             url = (student?.mediaURL)!
             addPointToMap()
         } else {
+            //if student doesnt exist create new instance
             student = StudentInformation(objectID: "", userID: udacityClient.userID!, firstName: udacityClient.firstName!, lastname: udacityClient.lastName!, mapstring: location, url: url, latitude: 0, longitude: 0)
         }
         
@@ -57,24 +60,23 @@ class InfoPostViewController: UIViewController {
             let localSearch = MKLocalSearch(request: localSearchRequest)
             localSearch.startWithCompletionHandler {
                 (localSearchResponse, error) -> Void in
-                if localSearchResponse == nil{
+                guard (localSearchResponse != nil) else {
                     self.showError("Cannot find location")
                     self.setUIEnabled(true)
+                    return
                 }
-                else {
-                    
-                    self.student?.updateLocation(localSearchResponse!.boundingRegion.center.latitude, longitude: localSearchResponse!.boundingRegion.center.longitude, location: self.location)
-                    self.clearPointsFromMap()
-                    self.addPointToMap()
-                    
-                    
-                    self.findOnMapButton.hidden = true
-                    self.submitButton.hidden = false
-                    self.inputText.placeholder = "URL"
-                    self.inputText.text = self.student?.mediaURL
-                    self.questionLabel.text = "Please enter URL"
-                    self.setUIEnabled(true)
-                }
+                self.student?.updateLocation(localSearchResponse!.boundingRegion.center.latitude, longitude: localSearchResponse!.boundingRegion.center.longitude, location: self.location)
+                self.clearPointsFromMap()
+                self.addPointToMap()
+                
+                
+                self.findOnMapButton.hidden = true
+                self.submitButton.hidden = false
+                self.inputText.placeholder = "URL"
+                self.inputText.text = self.student?.mediaURL
+                self.questionLabel.text = "Please enter URL"
+                self.setUIEnabled(true)
+                
             }
             
         }
@@ -82,6 +84,7 @@ class InfoPostViewController: UIViewController {
     
     
     private func clearPointsFromMap() {
+        //remove points from map
         for annotation in mapView.annotations {
             self.mapView.removeAnnotation(annotation)
         }
@@ -89,6 +92,7 @@ class InfoPostViewController: UIViewController {
     }
     
     private func addPointToMap() {
+        // add points to map
         let pointAnnotation = student?.toMapAnnotation()
         let pinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: "pin")
         self.mapView.centerCoordinate = pointAnnotation!.coordinate
@@ -117,7 +121,7 @@ class InfoPostViewController: UIViewController {
                 }
             }
         } else {
-            //update entry
+            //update existing entry
             ParseClient.parseSharedInstance().updateLocation(student!) {
                 (result, error) in
                 if (error==nil) {
@@ -136,30 +140,28 @@ class InfoPostViewController: UIViewController {
     
     
     @IBAction func deletePressed(sender: AnyObject) {
-        //find entries
-
+        //find existing entries for current student
         parseClient.getLocation(udacityClient.userID!) {
             (result, error) in
-            if (error == nil) {
-                for student in result! {
-                    self.parseClient.deleteLocation(student.objectId) {
-                        (result, error) in
-                        if (error == nil) {
-                            performUIUpdatesOnMain {
-                                self.showError("Entries deleted")
-                            }
-                        }
-                        else {
-                            performUIUpdatesOnMain {
-                                self.showError(error!)
-                            }
-                        }
-                    }
-                }
-            }
-            else {
+            guard (error == nil) else {
                 performUIUpdatesOnMain {
                     self.showError(error!)
+                }
+                return
+            }
+            for student in result! {
+                //delete locations by object id
+                self.parseClient.deleteLocation(student.objectId) {
+                    (result, error) in
+                    guard (error == nil) else {
+                        performUIUpdatesOnMain {
+                            self.showError(error!)
+                        }
+                        return
+                    }
+                    performUIUpdatesOnMain {
+                        self.showError("Entries deleted")
+                    }
                 }
             }
         }
@@ -171,15 +173,6 @@ class InfoPostViewController: UIViewController {
         presentViewController(alertView, animated: true, completion: nil)
     }
     
-    /*
-    @IBOutlet weak var inputText: UITextField!
-    @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var findOnMapButton: UIButton!
-    @IBOutlet weak var cancelButton: UIButton!
-    @IBOutlet weak var submitButton: UIButton!
-    @IBOutlet weak var questionLabel: UILabel!
-    @IBOutlet weak var activityView: UIActivityIndicatorView!
-*/
     private func setUIEnabled(enabled: Bool) {
         
         // adjust button alpha

@@ -26,17 +26,18 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if (FBSDKAccessToken.currentAccessToken() != nil)
-        {
+        
+        
+    }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        if (FBSDKAccessToken.currentAccessToken() != nil) {
             
-           
         }
-        else
-        {
+        else {
             fbLoginButton.delegate = self;
             fbLoginButton.readPermissions = ["public_profile", "email"]
             FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
-            
         }
         
     }
@@ -50,7 +51,7 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
         }
         else if result.isCancelled {
             // Handle cancellations
-            self.showError("Login cancelled")
+            self.showError("Facebook Login Cancelled")
         }
         else {
             // Do work

@@ -18,124 +18,70 @@ class ParseClient: NSObject {
         super.init()
     }
     
-    
-    //GET Method
-    func taskForGETMethod(parameters: [String:AnyObject], completionHandlerForGET: (results: AnyObject!, error: NSError?)->Void) -> NSURLSessionDataTask {
-        let request = NSMutableURLRequest(URL: ParseClient.parseURLFromParameters(parameters))
+    // create request based on details of methods
+    private func createRequest(methodType: String, methodURL: String, parameters: [String:AnyObject], jsonData: String?) -> NSMutableURLRequest {
+        
+        let request = NSMutableURLRequest(URL: ParseClient.parseURLFromParameters(parameters, withPathExtension: methodURL))
         request.addValue(Constants.ApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue(Constants.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
-        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = methodType
+        if jsonData != nil {
+            request.HTTPBody = jsonData!.dataUsingEncoding(NSUTF8StringEncoding)
+        }
+        return request
+    }
+    
+    private func createTask(request: NSMutableURLRequest, completionHandlerForTask: (results: AnyObject!, error: NSError?)-> Void) ->NSURLSessionDataTask {
         let task = session.dataTaskWithRequest(request) {
             (data, response, error) in
             guard (error == nil) else {
-                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForGET)
+                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForTask)
                 return
             }
             /* GUARD: Did we get a successful 2XX response? */
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForGET)
+                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForTask)
                 return
             }
             guard let data = data else {
-                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForGET)
+                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForTask)
                 return
             }
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET)
- 
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForTask)
         }
         task.resume()
         return task
+    }
+    
+    
+    //GET Method
+    func taskForGETMethod(parameters: [String:AnyObject], completionHandlerForGET: (results: AnyObject!, error: NSError?)->Void) -> NSURLSessionDataTask {
+        
+        let request = createRequest("GET", methodURL: "", parameters: parameters, jsonData: nil)
+        return createTask(request, completionHandlerForTask: completionHandlerForGET)
     }
     
     // POST Function
     func taskForPOSTMethod(parameters: [String:AnyObject], jsonData: String, completionHandlerForPOST: (results: AnyObject!, error: NSError?)->Void) ->NSURLSessionDataTask {
         
-        let request = NSMutableURLRequest(URL: ParseClient.parseURLFromParameters(parameters))
-        request.addValue(Constants.ApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
-        request.addValue(Constants.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.HTTPMethod = "POST"
-        
-        request.HTTPBody = jsonData.dataUsingEncoding(NSUTF8StringEncoding)
-        let task = session.dataTaskWithRequest(request) {
-            (data, response, error) in
-            guard (error == nil) else {
-                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForPOST)
-                return
-            }
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                print(response)
-                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForPOST)
-                return
-            }
-            guard let data = data else {
-                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForPOST)
-                return
-            }
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
-            
-        }
-        task.resume()
-        return task
+        let request = createRequest("POST", methodURL: "", parameters: parameters, jsonData: jsonData)
+        return createTask(request, completionHandlerForTask: completionHandlerForPOST)
     }
     
     // DELETE Function
     func taskForDELETEMethod(method: String, completionHandlerForDELETE: (results: AnyObject!, error: NSError?)->Void) ->NSURLSessionDataTask {
-        let request = NSMutableURLRequest(URL: ParseClient.parseURL(method))
-        request.addValue(Constants.ApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
-        request.addValue(Constants.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
-        request.HTTPMethod = "DELETE"
-        let task = session.dataTaskWithRequest(request) {
-            (data, response, error) in
-            guard (error == nil) else {
-                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForDELETE)
-                return
-            }
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                print(response)
-                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForDELETE)
-                return
-            }
-            guard let data = data else {
-                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForDELETE)
-                return
-            }
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForDELETE)
-        }
-        task.resume()
-        return task
+        let parameters = [String:AnyObject]()
+        let request = createRequest("DELETE", methodURL: method, parameters: parameters, jsonData: nil)
+        return createTask(request, completionHandlerForTask: completionHandlerForDELETE)
+        
     }
     
     // UPDATE FUNCTION
     func taskForPUTMethod(method: String, jsonData: String, completionHandlerForPUT: (results: AnyObject!, error: NSError?)->Void) ->NSURLSessionDataTask {
-        let request = NSMutableURLRequest(URL: ParseClient.parseURL(method))
-        request.addValue(Constants.ApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
-        request.addValue(Constants.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.HTTPMethod = "PUT"
-        request.HTTPBody = jsonData.dataUsingEncoding(NSUTF8StringEncoding)
-        let task = session.dataTaskWithRequest(request) {
-            (data, response, error) in
-            guard (error == nil) else {
-                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForPUT)
-                return
-            }
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                print(response)
-                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForPUT)
-                return
-            }
-            guard let data = data else {
-                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForPUT)
-                return
-            }
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPUT)
-        }
-        task.resume()
-        return task
+        let parameters = [String:AnyObject]()
+        let request = createRequest("PUT", methodURL: method, parameters: parameters, jsonData: jsonData)
+        return createTask(request, completionHandlerForTask: completionHandlerForPUT)
     }
 
     
@@ -151,16 +97,7 @@ class ParseClient: NSObject {
         completionHandlerForConvertData(result: parsedResult, error: nil)
     }
 
-    //Create URL From parameters
-    class func parseURL(withPathExtension: String? = nil) -> NSURL {
-        
-        let components = NSURLComponents()
-        components.scheme = ParseClient.Constants.ApiScheme
-        components.host = ParseClient.Constants.ApiHost
-        components.path = ParseClient.Constants.ApiPath + (withPathExtension ?? "")
-        
-        return components.URL!
-    }
+   
 
     
     //Create URL From parameters
