@@ -31,7 +31,7 @@ extension ParseClient {
         }
     }
     
-    func postStudent(student: StudentInformation, completionHandlerForPostStudent: (result: StudentInformation?, error: String?)->Void) {
+    func addLocation(student: StudentInformation, completionHandlerForPostStudent: (result: StudentInformation?, error: String?)->Void) {
         let parameters = [String:AnyObject]()
         let jsonData = student.toJSON()
         taskForPOSTMethod(parameters, jsonData: jsonData) {
@@ -62,7 +62,6 @@ extension ParseClient {
         let jsonData = student.toJSON()
         var mutableMethod: String = Methods.UpdateObjectData
         mutableMethod = subtituteKeyInMethod(mutableMethod, key: URLKeys.ObjectId, value: student.objectId)!
-
         
         taskForPUTMethod(mutableMethod, jsonData: jsonData) {
             (results, error) in

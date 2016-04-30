@@ -8,7 +8,7 @@
 
 import UIKit
 import Foundation
-
+import FBSDKLoginKit
 class TabViewController: UITabBarController {
     
     
@@ -51,7 +51,22 @@ class TabViewController: UITabBarController {
         
         revert to login screen
         */
-        
+        if (FBSDKAccessToken.currentAccessToken() != nil)
+        {
+            let fbLoginManager = FBSDKLoginManager()
+            FBSDKLoginManager.logOut(fbLoginManager)()
+        }
+        udacityClient.logout() {
+            (success, errorString) in
+            if success {
+                performUIUpdatesOnMain {
+                    self.parentViewController?.dismissViewControllerAnimated(true, completion: nil)
+                }
+            }
+            else {
+                print(errorString)
+            }
+        }
         
     }
     

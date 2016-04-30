@@ -11,11 +11,39 @@ import Foundation
 
 extension UdacityClient {
     
-    func authenticateWithLogin(username: String, password: String, completionHandlerForAuth: (success: Bool, errorString: String?) -> Void) {
+    func authenticateWithLogin(username: String, password: String, completionHandlerForLogin: (success: Bool, errorString: String?) -> Void) {
         let jsonData = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
+        authenticateSession(jsonData) {
+            (success, errorString) in
+            completionHandlerForLogin(success: success, errorString: errorString)
+        }
+    }
+    func authenticateWithFB(fbAccessToken: String, completionHandlerForFBLogin: (success: Bool, errorString: String?) -> Void) {
+        let jsonData = "{\"facebook_mobile\": {\"access_token\": \"\(fbAccessToken)\"}}"
+        authenticateSession(jsonData) {
+            (success, errorString) in
+            completionHandlerForFBLogin(success: success, errorString: errorString)
+        }
+    }
+    
+    func logout(completionHandlerForLogout: (success: Bool, errorString: String?) ->Void) {
+        taskForDELETESession(Methods.Session) {
+            (success, error) in
+            if (error == nil) {
+                completionHandlerForLogout(success: true, errorString: nil)
+            }
+            else {
+                print(error)
+                completionHandlerForLogout(success: false, errorString: "Error logging out")
+            }
+            
+        }
+    }
+    
+    
+    private func authenticateSession(jsonData: String, completionHandlerForAuth: (success: Bool, errorString: String?) ->Void) {
         getSessionDetails(jsonData) {
             (success, sessionID, userID, errorString) in
-            
             if success {
                 self.sessionID = sessionID
                 self.userID = userID
@@ -30,12 +58,13 @@ extension UdacityClient {
                         completionHandlerForAuth(success: success, errorString: errorString)
                     }
                 }
-
+                
             } else {
                 completionHandlerForAuth(success: success, errorString: errorString)
             }
         }
     }
+
     
     
     private func getSessionDetails(jsonData: String, completionHandlerForSession: (success:Bool, sessionID: String?, userID: String?, errorString: String?) -> Void) {

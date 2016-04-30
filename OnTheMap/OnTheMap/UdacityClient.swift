@@ -89,6 +89,49 @@ class UdacityClient: NSObject {
         return task
     }
     
+    //DELETe MEthod
+    func taskForDELETESession(method: String, completionHandlerForDELETESession: (result: AnyObject!, error:NSError?) -> Void) -> NSURLSessionDataTask {
+        let request = NSMutableURLRequest(URL: UdacityClient.udacityURL(method))
+        
+        var xsrfCookie: NSHTTPCookie? = nil
+        let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        for cookie in sharedCookieStorage.cookies! {
+            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
+        }
+        if let xsrfCookie = xsrfCookie {
+            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
+        }
+        
+        
+        request.HTTPMethod = "DELETE"
+
+        let task = session.dataTaskWithRequest(request) {
+            (data, response, error) in
+            /* GUARD: Did an error occur during the request */
+            guard (error == nil) else {
+                self.sendError("There was an error with your request \(error)", errorDomain: "errorConnecting", completionHandlerForError: completionHandlerForDELETESession)
+                return
+            }
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
+                self.sendError("Your request returned a status code other than 2xx!", errorDomain: "invalidStatusCode", completionHandlerForError: completionHandlerForDELETESession)
+                return
+                
+            }
+            
+            /* GUARD: Was there any data returned? */
+            guard let data = data else {
+                self.sendError("No data was returned by the request!", errorDomain: "invalidData", completionHandlerForError: completionHandlerForDELETESession)
+                return
+            }
+            
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForDELETESession)
+            
+        }
+        task.resume()
+        return task
+    }
+
     
     
     // given raw JSON, return a usable Foundation object

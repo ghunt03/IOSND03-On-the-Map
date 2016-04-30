@@ -20,6 +20,9 @@ class InfoPostViewController: UIViewController {
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var submitButton: UIButton!
     @IBOutlet weak var questionLabel: UILabel!
+    @IBOutlet weak var activityView: UIActivityIndicatorView!
+    
+    
     
     let udacityClient = UdacityClient.sharedInstance()
     let parseClient = ParseClient.parseSharedInstance()
@@ -46,7 +49,9 @@ class InfoPostViewController: UIViewController {
     
     @IBAction func findOnMapPressed(sender: AnyObject) {
         location = inputText.text!
+        
         if location != "" {
+            setUIEnabled(false)
             let localSearchRequest:MKLocalSearchRequest! = MKLocalSearchRequest()
             localSearchRequest.naturalLanguageQuery = location
             let localSearch = MKLocalSearch(request: localSearchRequest)
@@ -54,6 +59,7 @@ class InfoPostViewController: UIViewController {
                 (localSearchResponse, error) -> Void in
                 if localSearchResponse == nil{
                     self.showError("Cannot find location")
+                    self.setUIEnabled(true)
                 }
                 else {
                     
@@ -67,6 +73,7 @@ class InfoPostViewController: UIViewController {
                     self.inputText.placeholder = "URL"
                     self.inputText.text = self.student?.mediaURL
                     self.questionLabel.text = "Please enter URL"
+                    self.setUIEnabled(true)
                 }
             }
             
@@ -98,7 +105,7 @@ class InfoPostViewController: UIViewController {
         student?.updateURL(inputText.text!)
         if student?.objectId == "" {
             //Create new entry
-            ParseClient.parseSharedInstance().postStudent(student!) {
+            ParseClient.parseSharedInstance().addLocation(student!) {
                 (result, error) in
                 if (error==nil) {
                     performUIUpdatesOnMain {
@@ -163,4 +170,30 @@ class InfoPostViewController: UIViewController {
         alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
         presentViewController(alertView, animated: true, completion: nil)
     }
+    
+    /*
+    @IBOutlet weak var inputText: UITextField!
+    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var findOnMapButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var submitButton: UIButton!
+    @IBOutlet weak var questionLabel: UILabel!
+    @IBOutlet weak var activityView: UIActivityIndicatorView!
+*/
+    private func setUIEnabled(enabled: Bool) {
+        
+        // adjust button alpha
+        if enabled {
+            findOnMapButton.alpha = 1.0
+            cancelButton.alpha = 1.0
+            submitButton.alpha = 1.0
+            activityView.stopAnimating()
+        } else {
+            findOnMapButton.alpha = 0.5
+            cancelButton.alpha = 0.5
+            submitButton.alpha = 0.5
+            activityView.startAnimating()
+        }
+    }
+    
 }
